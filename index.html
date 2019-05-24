@@ -1,0 +1,32 @@
+<span>bitcoin transaction id:</span>
+<input id='txId' placeholder="72c8462c1cb86d3117a8d8313a9fd4910975a3c28a9046fa2ab96e764c03ae6b">
+<button onclick="getPriceHistory()">Get Price History</button>
+<div id="priceHistory"></div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+<script>
+  async function getPriceHistory() {
+    // get tx from input
+    const txId = document.getElementById('txId').value
+    // get tx info
+    const txData = (await axios.get(`https://api.blockcypher.com/v1/btc/main/txs/${txId}`)).data
+    // convert sats to btc
+    const txAmount = txData.outputs[0].value / 100000000
+    // get timestamp
+    const txStartTime = new Date(txData.confirmed).getTime()
+    const txEndTime = txStartTime + (1000* 60 * 60 * 24)
+    // get price at that time
+    const historicalData = (await axios.get(`https://api.coincap.io/v2/assets/bitcoin/history?interval=d1&start=${txStartTime}&end=${txEndTime}`)).data.data
+    const historicalPrice = Number(historicalData[0].priceUsd)
+    // get current price
+    const currentData = (await axios.get(`https://api.coincap.io/v2/assets/bitcoin/history?interval=d1`)).data.data 
+    const currentPrice = Number(currentData[0].priceUsd)
+    // calculate how value of tx at that time
+    const historicalValue = txAmount * historicalPrice
+    const currentValue = txAmount * currentPrice 
+    // display
+    const text = `Transaction Date: ${txData.confirmed} <br> Price then: $${historicalValue} <br> Price now: $${currentValue}`
+    document.getElementById('priceHistory').innerHTML = text
+  }
+</script>
