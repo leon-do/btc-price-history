@@ -22,7 +22,7 @@
     // get current price
     const currentData = (await axios.get(`https://api.coincap.io/v2/assets/bitcoin/history?interval=d1`)).data.data 
     const currentPrice = Number(currentData[0].priceUsd)
-    // calculate how value of tx at that time
+    // calculate the value (btc) sent at that time
     const historicalValue = txAmount * historicalPrice
     const currentValue = txAmount * currentPrice 
     // display
