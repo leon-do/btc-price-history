@@ -15,18 +15,18 @@
     const txAmount = txData.outputs[0].value / 100000000
     // get timestamp
     const txStartTime = new Date(txData.confirmed).getTime()
-    const txEndTime = txStartTime + (1000* 60 * 60 * 24)
+    const txEndTime = txStartTime + (1000 * 60 * 60 * 24)
     // get price at that time
     const historicalData = (await axios.get(`https://api.coincap.io/v2/assets/bitcoin/history?interval=d1&start=${txStartTime}&end=${txEndTime}`)).data.data
     const historicalPrice = Number(historicalData[0].priceUsd)
     // get current price
-    const currentData = (await axios.get(`https://api.coincap.io/v2/assets/bitcoin/history?interval=d1`)).data.data 
-    const currentPrice = Number(currentData[0].priceUsd)
+    const currentData = (await axios.get(`https://api.coincap.io/v2/assets/bitcoin`)).data.data
+    const currentPrice = Number(currentData.priceUsd)
     // calculate the value (btc) sent at that time
     const historicalValue = txAmount * historicalPrice
-    const currentValue = txAmount * currentPrice 
+    const currentValue = txAmount * currentPrice
     // display
-    const text = `Transaction Date: ${txData.confirmed} <br> Price then: $${historicalValue} <br> Price now: $${currentValue}`
+    const text = `Transaction Date: ${txData.confirmed} <br> Amount sent: ${txAmount} <br> Price then: $${historicalValue} <br> Price now: $${currentValue}`
     document.getElementById('priceHistory').innerHTML = text
   }
 </script>
